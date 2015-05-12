@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration PUBLIC "-//LOGGER" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Threshold" value="DEBUG" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%c] - %m%n" />
+		</layout>
+	</appender>
+
+	<category name="org.apache">
+		<priority value="INFO" />
+	</category>	
+	<category name="org.jboss">
+		<priority value="WARN" />
+	</category>	
+	<category name="cz.cvut">
+		<priority value="INFO" />
+	</category>
+
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="CONSOLE" />
+	</root>
+	
+</log4j:configuration>
