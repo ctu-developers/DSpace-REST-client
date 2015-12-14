@@ -4,6 +4,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import cz.cvut.dspace.rest.client.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
 * @author Petr Karel
 * @version $Revision: 4 $
@@ -17,7 +19,7 @@ public class BasicDSpaceRESTClient extends AbstractDSpaceRESTClient {
 	@Override
 	public void create() {
 		ResteasyClientBuilder builder = new ResteasyClientBuilder();
-		builder.disableTrustManager();
+		builder.disableTrustManager().establishConnectionTimeout(120, TimeUnit.SECONDS);
 		client = builder.build();
 	}
 	

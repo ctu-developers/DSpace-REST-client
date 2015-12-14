@@ -8,6 +8,8 @@ import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 
 import cz.cvut.dspace.rest.client.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
 * @author Petr Karel
 * @version $Revision: 4 $
@@ -32,7 +34,7 @@ public class PooledDSpaceRESTClient extends AbstractDSpaceRESTClient {
 		}
 		httpClient = new DefaultHttpClient(connectionManager);
 		engine = new ApacheHttpClient4Engine(httpClient);
-		client = new ResteasyClientBuilder().httpEngine(engine).disableTrustManager().build();
+		client = new ResteasyClientBuilder().httpEngine(engine).disableTrustManager().establishConnectionTimeout(120, TimeUnit.SECONDS).build();
 	}
 	
 	@Override
