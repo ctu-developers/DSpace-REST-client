@@ -33,14 +33,6 @@
 			<version>3.0.8.Final</version>
 			<scope>compile</scope>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson-provider</artifactId>
-			<version>3.0.8.Final</version>
-			<scope>compile</scope>
-    	</dependency>
-    	  -->
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>

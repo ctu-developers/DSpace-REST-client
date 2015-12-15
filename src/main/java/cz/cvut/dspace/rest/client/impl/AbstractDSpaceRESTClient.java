@@ -20,6 +20,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.dspace.rest.common.*;
+import org.dspace.rest.common.authority.Authority;
+import org.dspace.rest.common.authority.AuthorityPerson;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.joda.time.LocalDate;
@@ -48,8 +50,13 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 	protected static final String ITEMS = "/items";
 	protected static final String BITSTREAMS = "/bitstreams";
 	protected static final String METADATA = "/metadata";
+    /** Header key for token. */
 	protected static final String HEADER_TOKEN = "rest-dspace-token";
-	
+    /** path for authority persons. */
+    protected static final String AUTHORITY_PERSONS = "/authoritypersons";
+    /** path for authorities */
+	protected static final String AUTHORITIES = "/authorities";
+
 	protected ResteasyClient client;
 	
 	public AbstractDSpaceRESTClient(Configuration configuration) {
@@ -854,5 +861,362 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		}
 	}
 
+    /* -------------------------------------------------------------------------------------------------------------- */
+    /* Authority persons */
 
+    /**
+     * Read all authority persons.
+     *
+     * @param limit  Limit of persons in page.
+     * @param offset Offset of persons int list.
+     *
+     * @return Returns all authority persons in dspace authority module.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is thrown when was problem with reading authority persons. forbidden.
+     */
+    @Override
+    public final List<AuthorityPerson> readAuthorityPersons(final Integer limit, final Integer offset) throws ProcessingException, WebApplicationException {
+        log.debug("Reading authority persons from DSpace.");
+        AuthorityPerson[] persons = null;
+
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + addArguments("", limit, offset));
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            persons = extractResult(AuthorityPerson[].class, response);
+            log.info("Authority persons were successfully read from DSpace. (count={})", persons.length);
+        } catch (WebApplicationException ex) {
+            log.error("Reading authority persons failed. Response code: {}.", response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return Arrays.asList(persons);
+    }
+
+    /**
+     * Read authority person by uid.
+     *
+     * @param uid Uid of authority person.
+     *
+     * @return Return authority person which corresponds with uid.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is thrown when was problem with reading authority person. Not found, forbidden.
+     */
+    @Override
+    public final AuthorityPerson readAuthorityPerson(final String uid) throws ProcessingException, WebApplicationException {
+        log.debug("Reading authority person(uid={}) from DSpace.", uid);
+        AuthorityPerson person = null;
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            person = extractResult(AuthorityPerson.class, response);
+            log.info("Authority person(uid={}) were successfully read from DSpace.", uid);
+        } catch (WebApplicationException ex) {
+            log.error("Reading authority person(uid={}) failed. Response code: {}.", uid, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return person;
+    }
+
+    /**
+     * Read authorities in authority person.
+     *
+     * @param uid    Uid of authority person.
+     * @param limit  Limit of authorities in list.
+     * @param offset Offset of authorities in list.
+     *
+     * @return Return list of authorities.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with reading authority person or authorities. Not
+     *                                 found, forbidden.
+     */
+    @Override
+    public final List<Authority> readAuthorityPersonAuthorities(final String uid, final Integer limit, final Integer offset) throws ProcessingException, WebApplicationException {
+        log.debug("Reading authorities from authority person(uid={}) from DSpace.", uid);
+        Authority[] authorities = null;
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid + AUTHORITIES + addArguments("", limit, offset));
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            authorities = extractResult(Authority[].class, response);
+            log.info("Authorities from authority person(uid={}) were successfully read from DSpace.", uid);
+        } catch (WebApplicationException ex) {
+            log.error("Reading authorities from authority person(uid={}) failed. Response code: {}.", uid, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return Arrays.asList(authorities);
+    }
+
+    /**
+     * Read authority key in authority person.
+     *
+     * @param uid             Uid of authority person.
+     * @param nameOfAuthority Name of authority.
+     *
+     * @return Return key of authority.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with reading authority person. Not found, forbidden.
+     */
+    @Override
+    public final String readAuthorityPersonsAuthorityKey(final String uid, final String nameOfAuthority) throws ProcessingException, WebApplicationException {
+        log.debug("Reading authority({}) key from authority person(uid={}) from DSpace.", nameOfAuthority, uid);
+        String key = "";
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid + AUTHORITIES + "/" + nameOfAuthority);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            key = extractResult(String.class, response);
+            log.info("Authority({}) key from authority person(uid={}) were successfully read from DSpace.", nameOfAuthority, uid);
+        } catch (WebApplicationException ex) {
+            log.error("Reading authority({}) key person(uid={}) failed. Response code: {}.", new Object[]{nameOfAuthority, uid, response.getStatus()});
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return key;
+    }
+
+    /**
+     * Create authority person in authority module.
+     *
+     * @param authorityPerson Authority person which will be created. If uid is filled, person will created with this
+     *                        uid.
+     *
+     * @return Return created authority person.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with creating authority person. Forbidden.
+     */
+    @Override
+    public final AuthorityPerson createAuthorityPerson(final AuthorityPerson authorityPerson) throws ProcessingException, WebApplicationException {
+        log.debug("Creating authority person.");
+        AuthorityPerson person = null;
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(authorityPerson, MediaType.APPLICATION_JSON));
+        try {
+            person = extractResult(AuthorityPerson.class, response);
+            log.info("Authority person(uid={}) was successfully created.", authorityPerson.getUid());
+        } catch (WebApplicationException ex) {
+            log.error("Creating authority person failed. Response code: {}.", response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return person;
+    }
+
+    /**
+     * Create authority in authority person.
+     *
+     * @param uid       Uid of authority person.
+     * @param authority Authority which will be created.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with creating authority, reading authority person. Not
+     *                                 found, forbidden.
+     */
+    @Override
+    public final void createAuthorityPersonAuthority(final String uid, final Authority authority) throws ProcessingException, WebApplicationException {
+        log.debug("Creating authority in authority person(uid={}).", uid);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid + AUTHORITIES);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(authority, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Authority in authority person(uid={}) was successfully created.", uid);
+        } catch (WebApplicationException ex) {
+            log.error("Creating authority in authority person(uid={}) failed. Response code: {}.", uid, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Update authority person.
+     *
+     * @param uid             Uid of authority person.
+     * @param authorityPerson Authority person which will be used to updated.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with updating authority person. Not found, forbidden.
+     */
+    @Override
+    public final void updateAuthorityPerson(final String uid, final AuthorityPerson authorityPerson) throws ProcessingException, WebApplicationException {
+        log.debug("Updating authority person(uid={}).", uid);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(authorityPerson, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Authority person(uid={}) was successfully updated.", authorityPerson.getUid());
+        } catch (WebApplicationException ex) {
+            log.error("Updating authority person(uid={}) failed. Response code: {}.", uid, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Update authority in authority person.
+     *
+     * @param uid       Uid of authority person.
+     * @param authority Authority which will be sed to update.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is thrown when was problem with reading authority person, updating authority. Not
+     *                                 found, forbidden.
+     */
+    @Override
+    public final void updateAuthorityPersonAuthority(final String uid, final String nameOfAuthority, final Authority authority) throws ProcessingException, WebApplicationException {
+        log.debug("Updating authority({}) in authority person(uid={}).", nameOfAuthority, uid);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid + AUTHORITIES + "/" +  nameOfAuthority);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(authority, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Authority({}) in authority person(uid={}) was successfully updated.", nameOfAuthority, uid);
+        } catch (WebApplicationException ex) {
+            log.error("Updating authority({}) in authority person(uid={}) failed. Response code: {}.", new Object[]{nameOfAuthority, uid, response.getStatus()});
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Delete authority person.
+     *
+     * @param uid Uid of authority person.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is thrown when was problem with deleting authority person. Not found, forbidden.
+     */
+    @Override
+    public final void deleteAuthorityPerson(final String uid) throws ProcessingException, WebApplicationException {
+        log.debug("Deleting authority person(uid={}).", uid);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
+        try {
+            handleErrorStatus(response);
+            log.info("Authority person(uid={}) was successfully deleted.", uid);
+        } catch (WebApplicationException ex) {
+            log.error("Deleting authority person(uid={}) failed. Response code: {}.", uid, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Delete authority in authority person.
+     *
+     * @param uid             Uid of authority person.
+     * @param nameOfAuthority Name of authority which will be delted.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is thrown when was problem with deleting authority. Not found, forbidden.
+     */
+    @Override
+    public final void deleteAuthorityInAuthorityPerson(final String uid, final String nameOfAuthority) throws ProcessingException, WebApplicationException {
+        log.debug("Deleting authority({}) in authority person(uid={}).", nameOfAuthority, uid);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/" + uid + AUTHORITIES + "/" +  nameOfAuthority);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
+        try {
+            handleErrorStatus(response);
+            log.info("Authority({}) in authority person(uid={}) was successfully deleted.", nameOfAuthority, uid);
+        } catch (WebApplicationException ex) {
+            log.error("Deleting authority({}) in authority person(uid={}) failed. Response code: {}.", new Object[]{nameOfAuthority, uid, response.getStatus()});
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Search for authority person by authority.
+     *
+     * @param authority Authority by which will be searched for.
+     *
+     * @return Return founded authority person.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with reading authority person. Not found, forbidden.
+     */
+    @Override
+    public final AuthorityPerson searchForAuthorityPersonByAuthority(final Authority authority) throws ProcessingException, WebApplicationException {
+        log.debug("Searching for authority person by authority({}:{}).", authority.getName(), authority.getKey());
+        AuthorityPerson person = null;
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/search-by-authority");
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(authority, MediaType.APPLICATION_JSON));
+        try {
+            person = extractResult(AuthorityPerson.class, response);
+            log.info("Authority person were successfully searched in authority module.");
+        } catch (WebApplicationException ex) {
+            log.error("Searching for authority person by authority({}:{}) failed. Response code: {}.", new Object[]{authority.getName(), authority.getKey(), response.getStatus()});
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return person;
+    }
+
+    /**
+     * Search for authority person bz name.
+     *
+     * @param name   Name of authority person. Lastname, Firstname
+     * @param limit  Limit of authority persons in list.
+     * @param offset Offset of authority persons in list.
+     *
+     * @return Return list of founded authority persons.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException Is throw when was problem with reading authority persons.
+     */
+    @Override
+    public final List<AuthorityPerson> searchForAuthorityPersonByName(final String name, final Integer limit, final Integer offset) throws ProcessingException, WebApplicationException {
+        log.debug("Searching for authority persons with name({}) from authority module.", name);
+        AuthorityPerson[] persons = null;
+
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + AUTHORITY_PERSONS + "/search-by-name" + addArguments("", limit, offset));
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(name, MediaType.APPLICATION_JSON));
+        try {
+            persons = extractResult(AuthorityPerson[].class, response);
+            log.info("Authority persons were successfully searched in authority module. (count={})", persons.length);
+        } catch (WebApplicationException ex) {
+            log.error("Searching authority persons failed. Response code: {}.", response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return Arrays.asList(persons);
+    }
 }

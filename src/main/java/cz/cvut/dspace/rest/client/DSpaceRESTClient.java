@@ -7,6 +7,8 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 
 import org.dspace.rest.common.*;
+import org.dspace.rest.common.authority.Authority;
+import org.dspace.rest.common.authority.AuthorityPerson;
 
 /**
  * Interface for DSpace rest client.
@@ -452,4 +454,132 @@ public interface DSpaceRESTClient {
      */
 	void deleteBitstreamPolicy(Integer bitstreamId, Integer policyId) throws ProcessingException, WebApplicationException;
 
+    /* -------------------------------------------------------------------------------------------------------------- */
+    /* Authority persons */
+
+    /**
+     * Read all authority persons.
+     *
+     * @param limit Limit of persons in page.
+     * @param offset Offset of persons int list.
+     * @return Returns all authority persons in dspace authority module.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is thrown when was problem with reading authority persons. forbidden.
+     */
+    List<AuthorityPerson> readAuthorityPersons(Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Read authority person by uid.
+     *
+     * @param uid Uid of authority person.
+     * @return Return authority person which corresponds with uid.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is thrown when was problem with reading authority person. Not found, forbidden.
+     */
+    AuthorityPerson readAuthorityPerson(String uid) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Read authorities in authority person.
+     *
+     * @param uid Uid of authority person.
+     * @param limit Limit of authorities in list.
+     * @param offset Offset of authorities in list.
+     * @return Return list of authorities.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with reading authority person or authorities. Not found, forbidden.
+     */
+    List<Authority> readAuthorityPersonAuthorities(String uid, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Read authority key in authority person.
+     *
+     * @param uid Uid of authority person.
+     * @param nameOfAuthority Name of authority.
+     * @return Return key of authority.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with reading authority person. Not found, forbidden.
+     */
+    String readAuthorityPersonsAuthorityKey(String uid, String nameOfAuthority) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Create authority person in authority module.
+     *
+     * @param authorityPerson Authority person which will be created. If uid is filled, person will created with this uid.
+     * @return Return created authority person.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with creating authority person. Forbidden.
+     */
+    AuthorityPerson createAuthorityPerson(AuthorityPerson authorityPerson) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Create authority in authority person.
+     *
+     * @param uid Uid of authority person.
+     * @param authority Authority which will be created.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with creating authority, reading authority person. Not found, forbidden.
+     */
+    void createAuthorityPersonAuthority(String uid, Authority authority) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Update authority person.
+     *
+     * @param uid Uid of authority person.
+     * @param authorityPerson Authority person which will be used to updated.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with updating authority person. Not found, forbidden.
+     */
+    void updateAuthorityPerson(String uid, AuthorityPerson authorityPerson) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Update authority in authority person.
+     *
+     * @param uid Uid of authority person.
+     * @param nameOfAuthority Name of authority which will be updated.
+     * @param authority Authority which will be sed to update.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is thrown when was problem with reading authority person, updating authority. Not found, forbidden.
+     */
+    void updateAuthorityPersonAuthority(String uid, String nameOfAuthority, Authority authority) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Delete authority person.
+     *
+     * @param uid Uid of authority person.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is thrown when was problem with deleting authority person. Not found, forbidden.
+     */
+    void deleteAuthorityPerson(String uid) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Delete authority in authority person.
+     *
+     * @param uid Uid of authority person.
+     * @param nameOfAuthority Name of authority which will be delted.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is thrown when was problem with deleting authority. Not found, forbidden.
+     */
+    void deleteAuthorityInAuthorityPerson(String uid, String nameOfAuthority) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Search for authority person by authority.
+     *
+     * @param authority Authority by which will be searched for.
+     * @return Return founded authority person.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with reading authority person. Not found, forbidden.
+     */
+    AuthorityPerson searchForAuthorityPersonByAuthority(Authority authority) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Search for authority person bz name.
+     *
+     * @param name Name of authority person. Lastname, Firstname
+     * @param limit Limit of authority persons in list.
+     * @param offset Offset of authority persons in list.
+     * @return Return list of founded authority persons.
+     * @throws ProcessingException ...
+     * @throws WebApplicationException Is throw when was problem with reading authority persons.
+     */
+    List<AuthorityPerson> searchForAuthorityPersonByName(String name, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 }
