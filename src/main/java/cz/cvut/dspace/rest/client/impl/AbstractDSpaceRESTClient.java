@@ -48,7 +48,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 	protected static final String ITEMS = "/items";
 	protected static final String BITSTREAMS = "/bitstreams";
 	protected static final String METADATA = "/metadata";
-	protected static final String headerToken = "rest-dspace-token";
+	protected static final String HEADER_TOKEN = "rest-dspace-token";
 	
 	protected ResteasyClient client;
 	
@@ -158,7 +158,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(community, MediaType.APPLICATION_JSON));
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(community, MediaType.APPLICATION_JSON));
         try {
             community = extractResult(Community.class, response);
             log.info("Community (handle={},id={}) successfully created in DSpace.", community.getHandle(), community.getID());
@@ -177,7 +177,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + communityId + addArguments(expand));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Community community = extractResult(Community.class, response);
             log.info("Community (handle={}) successfully read from DSpace(id={}).", community.getHandle(), community.getID());
@@ -196,7 +196,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + communityId);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(community, MediaType.APPLICATION_JSON));
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(community, MediaType.APPLICATION_JSON));
         try {
             handleErrorStatus(response);
             log.info("Community(id={}) successfully updated in DSpace.", community.getID());
@@ -214,7 +214,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + communityId);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
         try {
             handleErrorStatus(response);
             log.info("Community (id={}) successfully deleted in DSpace.", communityId);
@@ -232,7 +232,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Community[] communities = extractResult(Community[].class, response);
             log.info("Communities were successfully read from DSpace. (count={})", communities.length);
@@ -251,7 +251,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/top-communities" + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Community[] communities = extractResult(Community[].class, response);
             log.info("Top communities were successfully read from DSpace. (count={})", communities.length);
@@ -270,7 +270,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + parentCommunityId + COMMUNITIES);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(subcommunity, MediaType.APPLICATION_JSON));
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(subcommunity, MediaType.APPLICATION_JSON));
         try {
             subcommunity = extractResult(Community.class, response);
             log.info("Subcommunity (handle={},id={}) successfully created in community(id={}).", new Object[]{subcommunity.getHandle(), subcommunity.getID(), parentCommunityId});
@@ -289,7 +289,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + parentCommunityId + COMMUNITIES + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Community[] communities = extractResult(Community[].class, response);
             log.info("Subcommunities were successfully read from community(id={}). (count={})", parentCommunityId, communities.length);
@@ -308,7 +308,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + parentCommunityId + COMMUNITIES + "/" + subcommunityId );
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
         try {
             handleErrorStatus(response);
             log.info("Subcommunity (id={}) successfully deleted in community(id={}). ).", subcommunityId, parentCommunityId);
@@ -326,7 +326,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + parentCommunityId + COLLECTIONS + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Collection[] collections = extractResult(Collection[].class, response);
             log.info("Subcollections were successfully read from community(id={}). (count={})", parentCommunityId, collections.length);
@@ -345,7 +345,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + parentCommunityId + COLLECTIONS + "/" + subcollectionId );
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
         try {
             handleErrorStatus(response);
             log.info("subcollection (id={}) successfully deleted in community(id={}). ).", subcollectionId, parentCommunityId);
@@ -363,7 +363,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + parentCommunityId + COLLECTIONS);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(collection, MediaType.APPLICATION_JSON));
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(collection, MediaType.APPLICATION_JSON));
         try {
             collection = extractResult(Collection.class, response);
             log.info("Collection (handle={}, id={}) successfully created in community(id={}).", new Object[]{collection.getHandle(), collection.getID(), parentCommunityId});
@@ -382,7 +382,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + addArguments(expand));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Collection collection = extractResult(Collection.class, response);
             log.info("Collection (handle={},id={}) successfully read from DSpace.", collection.getHandle(), collection.getID());
@@ -401,7 +401,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(collection, MediaType.APPLICATION_JSON));
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(collection, MediaType.APPLICATION_JSON));
         try {
             handleErrorStatus(response);
             log.info("Collection (id={}) successfully updated in DSpace.", collection.getID());
@@ -420,7 +420,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId);
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
         try {
             handleErrorStatus(response);
             log.info("Collection(id={}) successfully deleted in DSpace.", collectionId);
@@ -438,7 +438,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Collection[] collections = extractResult(Collection[].class, response);
             log.info("Collections were successfully read from DSpace. (count={})", collections.length);
@@ -475,7 +475,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + parentCollectionId + ITEMS + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Item[] items = extractResult(Item[].class, response);
             log.info("Items were successfully read from collection(id={}). (count={})", parentCollectionId, items.length);
@@ -572,7 +572,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		String token = login();
 		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + "/items");
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(item, MediaType.APPLICATION_JSON));				
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(item, MediaType.APPLICATION_JSON));
 	    try {
 			item = extractResult(Item.class, response);
 			log.info("Item (handle={}) successfully created in collection (id={}).", item.getHandle(), collectionId);
@@ -592,7 +592,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		String token = login();		
 
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + ITEMS + "/" + itemId + METADATA);
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(metadataArray, MediaType.APPLICATION_JSON));
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(metadataArray, MediaType.APPLICATION_JSON));
 		try {
 			handleErrorStatus(response);
 			log.info("Item (id={}) successfully updated.", itemId);	        
@@ -609,7 +609,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		log.info("Deleting an existing item (id={}).", itemId);
         String token = login();        
         ResteasyWebTarget target = client.target(ENDPOINT_URL + ITEMS + "/" + itemId);
-        Response response = target.request().header(headerToken, token).delete();
+        Response response = target.request().header(HEADER_TOKEN, token).delete();
 		try {
 			handleErrorStatus(response);
 			log.info("Item (id={}) successfully deleted.", itemId);
@@ -627,7 +627,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + ITEMS + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Item[] items = extractResult(Item[].class, response);
             log.info("Items were successfully read from DSpace. (count={})", items.length);
@@ -646,7 +646,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		String token = login();		
 		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + "/addItem/" + itemId);
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(itemId, MediaType.APPLICATION_JSON));
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(itemId, MediaType.APPLICATION_JSON));
 		try {
 			handleErrorStatus(response);
 			log.info("Item (id={}) successfully added into collection (id={}).", itemId, collectionId);	        
@@ -664,7 +664,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		String token = login();		
 		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + "/items/" + itemId);
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
 		try {
 			handleErrorStatus(response);
 			log.info("Item (id={}) successfully deleted from collection (id={}).", itemId, collectionId);	        
@@ -683,7 +683,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		log.debug("Looking for bitstream with id: {}", bitstreamId);
 		String token = login();
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + BITSTREAMS + "/" + bitstreamId);
-	    Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+	    Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
 	    try {
 			return extractResult(Bitstream.class, response);
 	    } catch (NotFoundException ex) {
@@ -716,7 +716,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		
 		String token = login();
 		ResteasyWebTarget target = client.target(uriBuilder.build().toString());
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(is, MediaType.APPLICATION_JSON));
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(is, MediaType.APPLICATION_JSON));
 		try {			
 			bitstream = extractResult(Bitstream.class, response);
 			log.info("Bitstream (id={}) successfully added to item (id={}).", bitstream.getID(), itemId);
@@ -738,7 +738,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		if (is != null) {
 			log.info("Updating bitstream's (id={}) binary data.", bitstreamId);
 			target = client.target(ENDPOINT_URL + BITSTREAMS + "/" + bitstreamId + "/data");
-			response = target.request().header(headerToken, token).accept(MediaType.WILDCARD).put(Entity.entity(is, MediaType.APPLICATION_JSON));
+			response = target.request().header(HEADER_TOKEN, token).accept(MediaType.WILDCARD).put(Entity.entity(is, MediaType.APPLICATION_JSON));
 			try {
 				handleErrorStatus(response);
 				log.info("Bitstream's (id={}) binary data updated successfully.", bitstreamId);
@@ -753,7 +753,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		if (bitstream != null) {
 			log.info("Updating bitstream's (id={}) metadata.", bitstreamId);		
 			target = client.target(ENDPOINT_URL + BITSTREAMS + "/" + bitstreamId);
-	        response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(bitstream, MediaType.APPLICATION_JSON));
+	        response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(bitstream, MediaType.APPLICATION_JSON));
 			try {
 				handleErrorStatus(response);
 				log.info("Bitstream's (id={}) metadata updated successfully.", bitstreamId);
@@ -771,7 +771,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		log.info("Deleting an existing bitstream (id={}) in item (id={}).", bitstreamId, itemId);
 		String token = login();		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + ITEMS + "/" + itemId + BITSTREAMS + "/" + bitstreamId);
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
 		try {
 			handleErrorStatus(response);
 			log.info("Item's (id={}) bitstream (id={}) deleted successfully.", itemId, bitstreamId);
@@ -789,7 +789,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         String token = login();
 
         ResteasyWebTarget target = client.target(ENDPOINT_URL + BITSTREAMS + addArguments(expand, limit, offset));
-        Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
         try {
             Bitstream[] bitstreams = extractResult(Bitstream[].class, response);
             log.info("Bitstreams were successfully read from DSpace. (count={})", bitstreams.length);
@@ -808,7 +808,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		ResourcePolicy[] resourcePolicies = null;
 		String token = login();		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + BITSTREAMS + "/" + bitstreamId + "/policy");		
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).get();
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
 	    try {
 			resourcePolicies = extractResult(ResourcePolicy[].class, response);
 			return Arrays.asList(resourcePolicies);
@@ -825,7 +825,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		log.info("Adding a new policy to bitstream (id={}).", bitstreamId);
 		String token = login();
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + BITSTREAMS + "/" + bitstreamId + "/policy");
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(policy, MediaType.APPLICATION_JSON));
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(policy, MediaType.APPLICATION_JSON));
 		try {
 			handleErrorStatus(response);
 			log.info("Policy added to bitstream (id={}) successfully.", bitstreamId);
@@ -842,7 +842,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 		log.info("Deleting an existing policy (id={}) from bitstream (id={}).", policyId, bitstreamId);
 		String token = login();
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + BITSTREAMS + "/" + bitstreamId + "/policy/" + policyId);
-		Response response = target.request().header(headerToken, token).accept(MediaType.APPLICATION_JSON).delete();
+		Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
 		try {
 			handleErrorStatus(response);
 			log.info("Bitstream's (id={}) policy (id={}) deleted successfully.", bitstreamId, policyId);
@@ -853,4 +853,6 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 			response.close();
 		}
 	}
+
+
 }

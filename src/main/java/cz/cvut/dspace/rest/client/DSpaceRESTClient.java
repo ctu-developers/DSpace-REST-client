@@ -7,7 +7,6 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 
 import org.dspace.rest.common.*;
-import sun.plugin.perf.PluginRollup;
 
 /**
  * Interface for DSpace rest client.
@@ -17,8 +16,16 @@ import sun.plugin.perf.PluginRollup;
  * @version $Revision: 5 $
  */
 public interface DSpaceRESTClient {
-	
-	public String login() throws ProcessingException, WebApplicationException;
+
+    /**
+     * Login client into rest api.
+     *
+     * @return Returns token for logged user in DSpace rest api.
+     *
+     * @throws ProcessingException ...
+     * @throws WebApplicationException ..
+     */
+    String login() throws ProcessingException, WebApplicationException;
 
     /* COMMUNITIES */
     /**
@@ -29,8 +36,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is thrown when was problem with creating community in DSpace.
      *                                 Exception can any child class of WebApplicationException, which corresponds to HTTP code. It is
      *                                 thrown in this cases: server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public Community createCommunity(Community community) throws ProcessingException, WebApplicationException;
+    Community createCommunity(Community community) throws ProcessingException, WebApplicationException;
 
     /**
      * Read community from DSpace.
@@ -41,8 +49,9 @@ public interface DSpaceRESTClient {
      * @return Returns specific community if was found, otherwise it returns null.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading community from DSpace.
      *                                 Problem can be: community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public Community findCommunityById(Integer communityId, String expand) throws ProcessingException, WebApplicationException;
+    Community findCommunityById(Integer communityId, String expand) throws ProcessingException, WebApplicationException;
 
     /**
      * Update community in DSpace.
@@ -51,8 +60,9 @@ public interface DSpaceRESTClient {
      * @param community Updated community. Does not matter which id will be in instance of community.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with updating community in DSpace.
      *                                 Problem can be: community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public void updateCommunity(Integer communityId, Community community) throws ProcessingException, WebApplicationException;
+    void updateCommunity(Integer communityId, Community community) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete community from DSpace.
@@ -60,8 +70,9 @@ public interface DSpaceRESTClient {
      * @param communityId Id of community, which will be deleted.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting community in DSpace.
      *                                 Problem can be: community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public void deleteCommunity(Integer communityId) throws ProcessingException, WebApplicationException;
+    void deleteCommunity(Integer communityId) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all communities in DSpace.
@@ -73,8 +84,9 @@ public interface DSpaceRESTClient {
      * @return It returns filled or empty List of communities.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading communities from DSpace.
      *                                 Problem can be: Server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Community> readAllCommunities(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Community> readAllCommunities(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all top communities in DSpace.
@@ -86,8 +98,9 @@ public interface DSpaceRESTClient {
      * @return It returns List of all top communities in DSpace.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading communities from DSpace.
      *                                             Problem can be: server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Community> readTopCommunities(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Community> readTopCommunities(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Creates subcommunity in community.
@@ -98,8 +111,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with creating subcommunity in community or problem with
      *                                             finding community in DSpace. Problem can be: Parent community not found, server problem, access denied, bad URL
      *                                             and so on.
+     * @throws ProcessingException ...
      */
-    public Community createSubcommunityOfCommunity(Integer parentCommunityId, Community subcommunity) throws ProcessingException, WebApplicationException;
+    Community createSubcommunityOfCommunity(Integer parentCommunityId, Community subcommunity) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all subcommunities from parent community.
@@ -113,8 +127,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading subcommunities from community or problem
      *                                             with finding parent community. Problem can be: parent community not found, server problem, access denied,
      *                                             bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Community> readSubcommunitiesOfCommunity(Integer parentCommunityId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Community> readSubcommunitiesOfCommunity(Integer parentCommunityId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete subcommunity from parent community.
@@ -123,8 +138,9 @@ public interface DSpaceRESTClient {
      * @param subcommunityId    Subcommunity Id of parent community.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting subcommunity from community.
      *                                             Problem can be: parent community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public void deleteSubcommunityOfCommunity(Integer parentCommunityId, Integer subcommunityId) throws ProcessingException, WebApplicationException;
+    void deleteSubcommunityOfCommunity(Integer parentCommunityId, Integer subcommunityId) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all subcollections from parent community.
@@ -137,8 +153,9 @@ public interface DSpaceRESTClient {
      * @return It returns List of subcollections from parent community.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading subcollections from community.
      *                                             Problem can be: parent community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Collection> readSubcollectionsOfCommunity(Integer parentCommunityId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Collection> readSubcollectionsOfCommunity(Integer parentCommunityId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete subcollection from parent community.
@@ -147,8 +164,9 @@ public interface DSpaceRESTClient {
      * @param subcollectionId   Subcollection Id of parent community.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting subcollection from community.
      *                                             Problem can be: parent community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public void deleteSubcollectionOfCommunity(Integer parentCommunityId, Integer subcollectionId) throws ProcessingException, WebApplicationException;
+    void deleteSubcollectionOfCommunity(Integer parentCommunityId, Integer subcollectionId) throws ProcessingException, WebApplicationException;
 
 	/* COLLECTIONS */
 
@@ -161,8 +179,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is thrown when was problem with creating collection in DSpace.
      *                                 Exception can any child class of WebApplicationException, which corresponds to HTTP code. It is
      *                                 thrown in this cases: Parent community not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public Collection createCollection(Integer parentCommunityId, Collection collection) throws ProcessingException, WebApplicationException;
+    Collection createCollection(Integer parentCommunityId, Collection collection) throws ProcessingException, WebApplicationException;
 
     /**
      * Read collection from DSpace.
@@ -173,8 +192,9 @@ public interface DSpaceRESTClient {
      * @return Returns collection if was found, otherwise it returns null.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading collection from DSpace.
      *                                 Problem can be: collection  not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public Collection findCollectionById(Integer collectionId, String expand) throws ProcessingException, WebApplicationException;
+    Collection findCollectionById(Integer collectionId, String expand) throws ProcessingException, WebApplicationException;
 
     /**
      * Update collection in DSpace.
@@ -183,8 +203,9 @@ public interface DSpaceRESTClient {
      * @param collection Updated collection. Does not matter which id will be in instance of Collection
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with updating collection in DSpace.
      *                                 Problem can be: collection not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public void updateCollection(Integer collectionId, Collection collection) throws ProcessingException, WebApplicationException;
+    void updateCollection(Integer collectionId, Collection collection) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete collection from DSpace.
@@ -192,8 +213,9 @@ public interface DSpaceRESTClient {
      * @param collectionId Id of collection, which will be deleted.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting collection in DSpace.
      *                                 Problem can be: collection not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public void deleteCollection(Integer collectionId) throws ProcessingException, WebApplicationException;
+    void deleteCollection(Integer collectionId) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all collections.
@@ -205,8 +227,9 @@ public interface DSpaceRESTClient {
      * @return It returns filled or empty List of collections.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading collections from DSpace.
      *                                 Problem can be: Server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Collection> readAllCollections(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Collection> readAllCollections(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Look for collection in DSpace by name.
@@ -215,8 +238,9 @@ public interface DSpaceRESTClient {
      * @return Returns first collection with that name.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with searching collection DSpace.
      *                                             Problem can be: collection not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public Collection findCollectionByName(String name) throws ProcessingException, ProcessingException, WebApplicationException;
+    Collection findCollectionByName(String name) throws ProcessingException, WebApplicationException;
 
     /**
      * Read items from collection.
@@ -230,8 +254,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading items from collection or problem
      *                                             with finding parent collection. Problem can be: parent collection not found, server problem, access denied,
      *                                             bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Item> readCollectionItems(Integer parentCollectionId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Item> readCollectionItems(Integer parentCollectionId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
 	/* ITEMS */
     /**
@@ -243,8 +268,9 @@ public interface DSpaceRESTClient {
      * @return Returns item if was found, otherwise it returns null.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading item from DSpace.
      *                                 Problem can be: item not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public Item findItemById(Integer dspaceId, boolean includeMetadata, boolean includeBitstreams) throws ProcessingException, WebApplicationException;
+	Item findItemById(Integer dspaceId, boolean includeMetadata, boolean includeBitstreams) throws ProcessingException, WebApplicationException;
 
     /**
      * Find all items, which has passed metadata entry.
@@ -253,8 +279,9 @@ public interface DSpaceRESTClient {
      * @return Returns List of items which has that metadata entry, otherwise empty list.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with searching item.
      *                                             Problem can be: server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public List<Item> findItemsByMetadataEntry(MetadataEntry metadataEntry) throws ProcessingException, WebApplicationException;
+	List<Item> findItemsByMetadataEntry(MetadataEntry metadataEntry) throws ProcessingException, WebApplicationException;
 
     /**
      * Create item in DSpace.
@@ -265,8 +292,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is thrown when was problem with creating item in DSpace.
      *                                 Exception can any child class of WebApplicationException, which corresponds to HTTP code. It is
      *                                 thrown in this cases: Parent collection not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public Item createItem(Integer collectionId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
+	Item createItem(Integer collectionId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
 
     /**
      * Update item in collection.
@@ -275,8 +303,9 @@ public interface DSpaceRESTClient {
      * @param metadata Updated metadata.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with updating item in DSpace.
      *                                 Problem can be: item not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void updateItem(Integer itemId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
+	void updateItem(Integer itemId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete item from DSpace.
@@ -284,8 +313,9 @@ public interface DSpaceRESTClient {
      * @param itemId Id of item, which will be deleted.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting item in DSpace.
      *                                 Problem can be: Item not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void deleteItem(Integer itemId) throws ProcessingException, WebApplicationException;
+	void deleteItem(Integer itemId) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all item.
@@ -297,8 +327,9 @@ public interface DSpaceRESTClient {
      * @return It returns filled or empty List of items.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading items from DSpace.
      *                                 Problem can be: Server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Item> readAllItems(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Item> readAllItems(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Add item to existing collection.
@@ -308,8 +339,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is thrown when was problem with adding item to collection.
      *                                 Exception can any child class of WebApplicationException, which corresponds to HTTP code. It is
      *                                 thrown in this cases: Parent collection not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void addItemToCollection(Integer itemId, Integer collectionId) throws ProcessingException, WebApplicationException;
+	void addItemToCollection(Integer itemId, Integer collectionId) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete item from collection.
@@ -318,9 +350,10 @@ public interface DSpaceRESTClient {
      * @param collectionId Parent collection id.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting item from collection.
      *                                             Problem can be: parent collection not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void deleteItemFromCollection(Integer itemId, Integer collectionId) throws ProcessingException, WebApplicationException;
-	
+	void deleteItemFromCollection(Integer itemId, Integer collectionId) throws ProcessingException, WebApplicationException;
+
 	/* BITSTREAMS */
 
     /**
@@ -330,9 +363,10 @@ public interface DSpaceRESTClient {
      * @return Returns bitstream if was found, otherwise it returns null.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading bitstream from DSpace.
      *                                 Problem can be: bitstream not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public Bitstream findBitstreamById(Integer bitstreamId) throws ProcessingException, WebApplicationException;
-	
+	Bitstream findBitstreamById(Integer bitstreamId) throws ProcessingException, WebApplicationException;
+
 	//public InputStream getBitstreamBinaryData(Integer bitstreamId) throws ProcessingException, WebApplicationException;
 
     /**
@@ -345,8 +379,9 @@ public interface DSpaceRESTClient {
      * @throws javax.ws.rs.WebApplicationException Is thrown when was problem with creating bitstream in DSpace.
      *                                 Exception can any child class of WebApplicationException, which corresponds to HTTP code. It is
      *                                 thrown in this cases: Parent item not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public Bitstream addBitstream(Integer itemId, Bitstream bitstream, InputStream is) throws ProcessingException, WebApplicationException;
+	Bitstream addBitstream(Integer itemId, Bitstream bitstream, InputStream is) throws ProcessingException, WebApplicationException;
 
     /**
      * Update bitstream in DSpace.
@@ -356,8 +391,9 @@ public interface DSpaceRESTClient {
      * @param is Data which will be in replaced in bitstream.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with updating bitstream in DSpace.
      *                                 Problem can be: bitstream not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void updateBitstream(Integer bitstreamId, Bitstream bitstream, InputStream is) throws ProcessingException, WebApplicationException;
+	void updateBitstream(Integer bitstreamId, Bitstream bitstream, InputStream is) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete bitstream in item.
@@ -366,8 +402,9 @@ public interface DSpaceRESTClient {
      * @param bitstreamId  Id of bitstream, which will be deleted.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting bitstream from item.
      *                                             Problem can be: item not found, bitstream not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void deleteBitstream(Integer itemId, Integer bitstreamId) throws ProcessingException, WebApplicationException;
+	void deleteBitstream(Integer itemId, Integer bitstreamId) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all bitstreams.
@@ -378,8 +415,9 @@ public interface DSpaceRESTClient {
      * @return It returns filled or empty List of specific Bitstreams.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading bitstream from DSpace.
      *                                 Problem can be: Server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<Bitstream> readAllBitstreams(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+    List<Bitstream> readAllBitstreams(String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
 
     /**
      * Read all bitstream resource policies.
@@ -388,8 +426,9 @@ public interface DSpaceRESTClient {
      * @return It returns List of resource policies of bitstream.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with reading resource policies of bitstream.
      *                                             Problem can be: bitstream not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-    public List<ResourcePolicy> getBitstreamPolicies(Integer bitstreamId) throws ProcessingException, WebApplicationException;
+    List<ResourcePolicy> getBitstreamPolicies(Integer bitstreamId) throws ProcessingException, WebApplicationException;
 
     /**
      * Add resource policy to bitstream.
@@ -398,8 +437,9 @@ public interface DSpaceRESTClient {
      * @param policy      Resource policy which will be added to bitstream.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with adding resource policy of bitstream.
      *                                             Problem can be: bitstream not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void addBitstreamPolicy(Integer bitstreamId, ResourcePolicy policy) throws ProcessingException, WebApplicationException;
+	void addBitstreamPolicy(Integer bitstreamId, ResourcePolicy policy) throws ProcessingException, WebApplicationException;
 
     /**
      * Delete resource policy in bitstream.
@@ -408,7 +448,8 @@ public interface DSpaceRESTClient {
      * @param policyId Id of resource policy which will be deleted.
      * @throws javax.ws.rs.WebApplicationException Is throw when was problem with deleting resource policy of bitstream.
      *                                             Problem can be: bitstream not found, server problem, access denied, bad URL and so on.
+     * @throws ProcessingException ...
      */
-	public void deleteBitstreamPolicy(Integer bitstreamId, Integer policyId) throws ProcessingException, WebApplicationException;
+	void deleteBitstreamPolicy(Integer bitstreamId, Integer policyId) throws ProcessingException, WebApplicationException;
 
 }
