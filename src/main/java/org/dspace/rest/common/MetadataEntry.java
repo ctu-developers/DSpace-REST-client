@@ -26,6 +26,7 @@ public class MetadataEntry {
     String key;
     String value;
     String language;
+    String authority;
 
     public MetadataEntry() {}
 
@@ -59,7 +60,15 @@ public class MetadataEntry {
 		this.language = language;
 	}
 
-	@Override
+    public final String getAuthority() {
+        return authority;
+    }
+
+    public final void setAuthority(final String authority) {
+        this.authority = authority;
+    }
+
+    @Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("MetadataEntry [key=");
@@ -68,8 +77,10 @@ public class MetadataEntry {
 		builder.append(value);
 		builder.append(", language=");
 		builder.append(language);
+        builder.append(", authority=");
+        builder.append(authority);
 		builder.append("]");
 		return builder.toString();
 	}
-    
+
 }
