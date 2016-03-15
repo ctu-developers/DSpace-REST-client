@@ -3,6 +3,9 @@ package cz.cvut.dspace.rest.client.impl;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 import cz.cvut.dspace.rest.client.Configuration;
+import org.jboss.resteasy.plugins.providers.jackson.ResteasyJacksonProvider;
+
+import java.util.concurrent.TimeUnit;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +21,8 @@ public class BasicDSpaceRESTClient extends AbstractDSpaceRESTClient {
 
 	@Override
 	public void create() {
-		ResteasyClientBuilder builder = new ResteasyClientBuilder();
+		ResteasyJacksonProvider resteasyJacksonProvider = new ResteasyJacksonProvider();
+		ResteasyClientBuilder builder = new ResteasyClientBuilder().register(resteasyJacksonProvider);
 		builder.disableTrustManager().establishConnectionTimeout(120, TimeUnit.SECONDS);
 		client = builder.build();
 	}
