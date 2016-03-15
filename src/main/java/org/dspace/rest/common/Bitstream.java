@@ -9,8 +9,6 @@ package org.dspace.rest.common;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.log4j.Logger;
-
 /**
  * Created with IntelliJ IDEA.
  * User: peterdietz
@@ -20,7 +18,6 @@ import org.apache.log4j.Logger;
  */
 @XmlRootElement(name = "bitstream")
 public class Bitstream extends DSpaceObject {
-    Logger log = Logger.getLogger(Bitstream.class);
 
     private String bundleName;
     private String description;

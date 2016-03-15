@@ -7,6 +7,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 
 import cz.cvut.dspace.rest.client.Configuration;
+import org.jboss.resteasy.plugins.providers.jackson.ResteasyJacksonProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +26,8 @@ public class PooledDSpaceRESTClient extends AbstractDSpaceRESTClient {
 	}
 	
 	public void create() {
+		ResteasyJacksonProvider resteasyJacksonProvider = new ResteasyJacksonProvider();
+		ResteasyClientBuilder builder = new ResteasyClientBuilder().register(resteasyJacksonProvider);
 		connectionManager = new PoolingClientConnectionManager();
 		if (configuration.getMaxTotal() != null) {
 			connectionManager.setMaxTotal(configuration.getMaxTotal());
@@ -34,7 +37,7 @@ public class PooledDSpaceRESTClient extends AbstractDSpaceRESTClient {
 		}
 		httpClient = new DefaultHttpClient(connectionManager);
 		engine = new ApacheHttpClient4Engine(httpClient);
-		client = new ResteasyClientBuilder().httpEngine(engine).disableTrustManager().establishConnectionTimeout(120, TimeUnit.SECONDS).build();
+		client =  builder.httpEngine(engine).disableTrustManager().establishConnectionTimeout(120, TimeUnit.SECONDS).build();
 	}
 	
 	@Override
