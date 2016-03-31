@@ -461,8 +461,10 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
     @Override
     public Collection findCollectionByName(String name) throws ProcessingException, WebApplicationException {
         log.debug("Looking for collection with name: {}", name);
+        String token = login();
+
         ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/find-collection");
-        Response response = target.request().accept(MediaType.APPLICATION_JSON).post(Entity.entity(name, MediaType.APPLICATION_JSON));
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(name, MediaType.APPLICATION_JSON));
         try {
             return extractResult(Collection.class, response);
         } catch (NotFoundException ex) {
@@ -498,10 +500,11 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 	@Override
 	public Item findItemById(Integer itemId, boolean includeMetadata, boolean includeBitstreams) throws ProcessingException, WebApplicationException {
 		log.debug("Looking for item with id: {}", itemId);
+        String token = login();
 		Item item = null;
 		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + ITEMS + "/" + itemId + "?expand=parentCollectionList,parentCollection,metadata,bitstreams");
-	    Response response = target.request().accept(MediaType.APPLICATION_JSON).get();	    
+	    Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
 	    try {
 			item = extractResult(Item.class, response);
 	    } catch (NotFoundException ex) {
@@ -550,10 +553,11 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 	@Override
 	public List<Item> findItemsByMetadataEntry(MetadataEntry metadata) throws ProcessingException, WebApplicationException {
 		log.debug("Looking for items with metadataEntry: {}/{}", metadata.getKey(), metadata.getValue());
+        String token = login();
 		Item[] items = null;
 		
 		ResteasyWebTarget target = client.target(ENDPOINT_URL + ITEMS + "/find-by-metadata-field" + "?expand=parentCollectionList,parentCollection");	    
-	    Response response = target.request().accept(MediaType.APPLICATION_JSON).post(Entity.entity(metadata, MediaType.APPLICATION_JSON));	    	    
+	    Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(metadata, MediaType.APPLICATION_JSON));
 	    try {
 			items = extractResult(Item[].class, response);
 	    } catch (WebApplicationException ex) {
