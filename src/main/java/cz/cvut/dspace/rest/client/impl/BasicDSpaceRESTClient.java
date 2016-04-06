@@ -7,6 +7,8 @@ import org.jboss.resteasy.plugins.providers.jackson.ResteasyJacksonProvider;
 
 import java.util.concurrent.TimeUnit;
 
+import java.util.concurrent.TimeUnit;
+
 /**
 * @author Petr Karel
 * @version $Revision: 4 $
