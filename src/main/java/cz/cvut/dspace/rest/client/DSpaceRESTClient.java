@@ -29,6 +29,14 @@ public interface DSpaceRESTClient {
      */
     String login() throws ProcessingException, WebApplicationException;
 
+    /**
+     * Logout client into rest api.
+     *
+     * @throws ProcessingException ...
+     * @throws WebApplicationException ..
+     */
+    void logout() throws ProcessingException, WebApplicationException;
+
     /* COMMUNITIES */
     /**
      * Create top community in DSpace.

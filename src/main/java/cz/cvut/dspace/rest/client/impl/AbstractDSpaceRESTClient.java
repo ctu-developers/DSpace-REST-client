@@ -57,6 +57,8 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
     /** path for authorities */
     protected static final String AUTHORITIES = "/authorities";
 
+    protected String token = null;
+
     protected ResteasyClient client;
 
     public AbstractDSpaceRESTClient(Configuration configuration) {
@@ -146,17 +148,37 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
 
     @Override
     public String login() throws ProcessingException, WebApplicationException {
-        log.debug("Requesting authentication token [username={}, password={}].", configuration.getUsername(), "***");
-        ResteasyWebTarget target = client.target(ENDPOINT_URL + "/login");
-        Response response = target.request().accept(MediaType.APPLICATION_JSON).post(Entity.entity(new User(configuration.getUsername(), configuration.getPassword()), MediaType.APPLICATION_JSON));
+        if (token == null) {
+            log.debug("Requesting authentication token [username={}, password={}].", configuration.getUsername(), "***");
+            ResteasyWebTarget target = client.target(ENDPOINT_URL + "/login");
+            Response response = target.request().accept(MediaType.APPLICATION_JSON).post(Entity.entity(new User(configuration.getUsername(), configuration.getPassword()), MediaType.APPLICATION_JSON));
+            try {
+                token = extractResult(String.class, response);
+                return token;
+            } catch (WebApplicationException ex) {
+                log.error("Requesting authentication token failed. Response code: {}.", response.getStatus());
+                throw ex;
+            } finally {
+                response.close();
+            }
+        } else {
+            return token;
+        }
+    }
+
+    @Override
+    public void logout() throws ProcessingException, WebApplicationException {
+        ResteasyWebTarget target = client.target(ENDPOINT_URL + "/logout");
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(new User(configuration.getUsername(), configuration.getPassword()), MediaType.APPLICATION_JSON));
         try {
-            return extractResult(String.class, response);
+            handleErrorStatus(response);
         } catch (WebApplicationException ex) {
             log.error("Requesting authentication token failed. Response code: {}.", response.getStatus());
             throw ex;
         } finally {
             response.close();
         }
+        token = null;
     }
 
     @Override

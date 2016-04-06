@@ -60,11 +60,11 @@ public class MetadataEntry {
 		this.language = language;
 	}
 
-    public final String getAuthority() {
+    public String getAuthority() {
         return authority;
     }
 
-    public final void setAuthority(final String authority) {
+    public void setAuthority(String authority) {
         this.authority = authority;
     }
 
