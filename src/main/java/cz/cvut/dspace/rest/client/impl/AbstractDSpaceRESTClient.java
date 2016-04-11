@@ -4,16 +4,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.RedirectionException;
-import javax.ws.rs.ServerErrorException;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -57,7 +48,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
     /** path for authorities */
     protected static final String AUTHORITIES = "/authorities";
 
-    protected String token = null;
+    protected static String token = null;
 
     protected ResteasyClient client;
 
@@ -92,6 +83,8 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
             throw new BadRequestException(response);
         } else if (status == 401) {
             throw new NotAuthorizedException(response);
+        } else if (status == 403) {
+            throw new ForbiddenException(response);
         } else if (status == 404) {
             throw new NotFoundException(response);
         } else if (status == 500) {
@@ -147,7 +140,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
     }
 
     @Override
-    public String login() throws ProcessingException, WebApplicationException {
+    public synchronized String login() throws ProcessingException, WebApplicationException {
         if (token == null) {
             log.debug("Requesting authentication token [username={}, password={}].", configuration.getUsername(), "***");
             ResteasyWebTarget target = client.target(ENDPOINT_URL + "/login");
@@ -162,23 +155,47 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
                 response.close();
             }
         } else {
-            return token;
+            Status status = status();
+            if(status.isOkay() && status.isAuthenticated()) {
+                return token;
+            } else {
+                token = null;
+                return login();
+            }
         }
     }
 
-    @Override
-    public void logout() throws ProcessingException, WebApplicationException {
-        ResteasyWebTarget target = client.target(ENDPOINT_URL + "/logout");
-        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(new User(configuration.getUsername(), configuration.getPassword()), MediaType.APPLICATION_JSON));
+    public synchronized Status status() throws ProcessingException, WebApplicationException {
+        log.debug("Reading status about logged user under token. [token={}].", token);
+        ResteasyWebTarget target = client.target(ENDPOINT_URL + "/status");
+        Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        Status status = null;
         try {
-            handleErrorStatus(response);
+            status = extractResult(Status.class, response);
         } catch (WebApplicationException ex) {
             log.error("Requesting authentication token failed. Response code: {}.", response.getStatus());
             throw ex;
         } finally {
             response.close();
         }
-        token = null;
+        return status;
+    }
+
+    @Override
+    public synchronized void logout() throws ProcessingException, WebApplicationException {
+        if(token != null) {
+            ResteasyWebTarget target = client.target(ENDPOINT_URL + "/logout");
+            Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(new User(configuration.getUsername(), configuration.getPassword()), MediaType.APPLICATION_JSON));
+            try {
+                handleErrorStatus(response);
+            } catch (WebApplicationException ex) {
+                log.error("Requesting authentication token failed. Response code: {}.", response.getStatus());
+                throw ex;
+            } finally {
+                response.close();
+            }
+            token = null;
+        }
     }
 
     @Override

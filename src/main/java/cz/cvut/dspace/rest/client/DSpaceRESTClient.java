@@ -30,6 +30,15 @@ public interface DSpaceRESTClient {
     String login() throws ProcessingException, WebApplicationException;
 
     /**
+     * Get status about logged user.
+     *
+     * @return Returns status about logged user.
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    Status status() throws ProcessingException, WebApplicationException;
+
+    /**
      * Logout client into rest api.
      *
      * @throws ProcessingException ...
