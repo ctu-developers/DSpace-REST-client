@@ -1,13 +1,11 @@
 package cz.cvut.dspace.rest.client;
 
-import cz.cvut.dspace.rest.client.impl.AbstractDSpaceRESTClient;
 import cz.cvut.dspace.rest.client.impl.BasicDSpaceRESTClient;
 import org.dspace.rest.common.Status;
 import org.junit.BeforeClass;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.Properties;
 import org.junit.*;
@@ -115,36 +113,5 @@ public class LoginMethodsTest {
 
         thrown.expect(ForbiddenException.class);
         client.login();
-
-        Status status = client.status();
-        Assert.assertTrue(status.isOkay());
-        Assert.assertFalse(status.isAuthenticated());
-    }
-
-    @Test
-    public void testLoginBadTockenLogin() throws IllegalAccessException, NoSuchFieldException {
-        String token = client.login();
-        Assert.assertNotNull(token);
-        Assert.assertFalse(token.isEmpty());
-
-        Status status = client.status();
-        Assert.assertTrue(status.isOkay());
-        Assert.assertTrue(status.isAuthenticated());
-        Assert.assertEquals(token, status.getToken());
-
-        Field field = AbstractDSpaceRESTClient.class.getDeclaredField("token");
-        field.setAccessible(true);
-        field.set(client, "token");
-
-        String token2 = client.login();
-        Assert.assertNotNull(token2);
-        Assert.assertFalse(token2.isEmpty());
-
-        Assert.assertNotSame(token, token2);
-
-        status = client.status();
-        Assert.assertTrue(status.isOkay());
-        Assert.assertTrue(status.isAuthenticated());
-        Assert.assertEquals(token2, status.getToken());
     }
 }

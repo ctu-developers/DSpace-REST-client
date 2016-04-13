@@ -82,8 +82,10 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         } else if (status == 400) {
             throw new BadRequestException(response);
         } else if (status == 401) {
+            token = null;
             throw new NotAuthorizedException(response);
         } else if (status == 403) {
+            token = null;
             throw new ForbiddenException(response);
         } else if (status == 404) {
             throw new NotFoundException(response);
@@ -154,15 +156,8 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
             } finally {
                 response.close();
             }
-        } else {
-            Status status = status();
-            if(status.isOkay() && status.isAuthenticated()) {
-                return token;
-            } else {
-                token = null;
-                return login();
-            }
         }
+        return token;
     }
 
     public synchronized Status status() throws ProcessingException, WebApplicationException {
