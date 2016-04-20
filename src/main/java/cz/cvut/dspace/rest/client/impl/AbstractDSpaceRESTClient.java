@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -47,6 +48,8 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
     protected static final String AUTHORITY_PERSONS = "/authoritypersons";
     /** path for authorities */
     protected static final String AUTHORITIES = "/authorities";
+    /** path for edges */
+    protected static final String EDGES = "/edges";
 
     protected static String token = null;
 
@@ -1256,5 +1259,146 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
             response.close();
         }
         return Arrays.asList(persons);
+    }
+
+    /**
+     * Read all edges in Dspace.
+     *
+     * @return List of edges.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final List<Edge> readAllEdges() throws ProcessingException, WebApplicationException {
+        log.debug("Read all edges in DSpace");
+        Edge[] edges = null;
+
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            edges = extractResult(Edge[].class, response);
+            log.info("Edges were successfully read from DSpace.");
+        } catch (WebApplicationException ex) {
+            log.error("Reading all edges failed. Response code: {}.", response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return Arrays.asList(edges);
+    }
+
+    /**
+     * Read all parent edges from community.
+     *
+     * @param cvutId Id code of cvut organization unit.
+     *
+     * @return List of edges.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final List<Edge> readParentEdges(final String cvutId) throws ProcessingException, WebApplicationException {
+        log.debug("Read parent edges for community(cvutId={}).", cvutId);
+        Edge[] edges = null;
+
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES + cvutId + "/parent");
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            edges = extractResult(Edge[].class, response);
+            log.info("Edges were successfully read from community(externalId={}).", cvutId);
+        } catch (WebApplicationException ex) {
+            log.error("Reading parent edges from community(externalId=()) failed. Response code: {}.", cvutId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return Arrays.asList(edges);
+    }
+
+    /**
+     * Read all child edges from cumminity.
+     *
+     * @param cvutId External id for which will be child read.
+     *
+     * @return List of edges.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final List<Edge> readChildEdges(final String cvutId) throws ProcessingException, WebApplicationException {
+        log.debug("Read child edges for community(cvutId={}).", cvutId);
+        Edge[] edges = null;
+
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES + cvutId + "/child");
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            edges = extractResult(Edge[].class, response);
+            log.info("Edges were successfully read from community(cvutId={}).", cvutId);
+        } catch (WebApplicationException ex) {
+            log.error("Reading child edges from community(cvutId=()) failed. Response code: {}.", cvutId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+        return Arrays.asList(edges);
+    }
+
+    /**
+     * Insert edge into Dspace.
+     *
+     * @param edge Edge which will be added.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final void insertEdge(final Edge edge) throws ProcessingException, WebApplicationException {
+        log.debug("Inserting edge parentCvutId={}, childCvutId=().", edge.getParentCvutId(), edge.getChildCvutId());
+        final String token = login();
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(edge, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Edge were successfully inserted to DSpace.");
+        } catch (WebApplicationException ex) {
+            log.error("Inserting edge parentCvutId={}, childCvutId=(), failed.Response code: {}.", new Object[] {edge.getParentCvutId(), edge.getChildCvutId(), response.getStatus()});
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Delete edge from Dspace.
+     *
+     * @param edge Edge which will be deleted.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final void deleteEdge(final Edge edge) throws ProcessingException, WebApplicationException {
+        log.debug("Deleting edge parentCvutId={}, childCvutId=().", edge.getParentCvutId(), edge.getChildCvutId());
+        final String token = login();
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES + "/" + edge.getParentCvutId() + "/" + edge.getChildCvutId());
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
+        try {
+            handleErrorStatus(response);
+            log.info("Edge were successfully deleted to DSpace.");
+        } catch (WebApplicationException ex) {
+            log.error("Deleting edge parentExternalId={}, childExternalId=(), failed.Response code: {}.", new Object[] {edge.getParentCvutId(), edge.getChildCvutId(), response.getStatus()});
+            throw ex;
+        } finally {
+            response.close();
+        }
     }
 }
