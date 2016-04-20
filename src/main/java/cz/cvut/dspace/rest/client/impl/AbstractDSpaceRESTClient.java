@@ -1362,7 +1362,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
      */
     @Override
     public final void insertEdge(final Edge edge) throws ProcessingException, WebApplicationException {
-        log.debug("Inserting edge parentCvutId={}, childCvutId=().", edge.getParentCvutId(), edge.getChildCvutId());
+        log.debug("Inserting edge parentCvutId={}, childCvutId={}.", edge.getParentCvutId(), edge.getChildCvutId());
         final String token = login();
         final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES);
         final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(edge, MediaType.APPLICATION_JSON));
@@ -1387,7 +1387,7 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
      */
     @Override
     public final void deleteEdge(final Edge edge) throws ProcessingException, WebApplicationException {
-        log.debug("Deleting edge parentCvutId={}, childCvutId=().", edge.getParentCvutId(), edge.getChildCvutId());
+        log.debug("Deleting edge parentCvutId={}, childCvutId={}.", edge.getParentCvutId(), edge.getChildCvutId());
         final String token = login();
         final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES + "/" + edge.getParentCvutId() + "/" + edge.getChildCvutId());
         final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).delete();
