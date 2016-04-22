@@ -216,6 +216,40 @@ public interface DSpaceRESTClient {
      */
     void deleteSubcollectionOfCommunity(Integer parentCommunityId, Integer subcollectionId) throws ProcessingException, WebApplicationException;
 
+    /**
+     * Read all metadata in community.
+     *
+     * @param communityId Id of community.
+     *
+     * @return Return List of metadata which community contains.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    List<MetadataEntry> readCommunityMetadata(Integer communityId) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Add metadata to community.
+     *
+     * @param communityId Id of community.
+     * @param metadata    List of metadat which will be added.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    void addCommunityMetadata(Integer communityId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Replace all metadata with this list of metadata.
+     *
+     * @param communityId Id of community.
+     * @param metadata    List of metadata which will be placed into community.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    void replaceCommunityMetadata(Integer communityId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
+
 	/* COLLECTIONS */
 
     /**
@@ -324,6 +358,40 @@ public interface DSpaceRESTClient {
      * @throws ProcessingException                 ...
      */
     List<Item> readCollectionItems(Integer parentCollectionId, String expand, Integer limit, Integer offset) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Read all metadata in collection.
+     *
+     * @param collectionId Id of collection.
+     *
+     * @return Return List of metadata which collection contains.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    List<MetadataEntry> readCollectionMetadata(Integer collectionId) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Add metadata to collection.
+     *
+     * @param collectionId Id of collection.
+     * @param metadata    List of metadat which will be added.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    void addCollectionMetadata(Integer collectionId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
+
+    /**
+     * Replace all metadata with this list of metadata.
+     *
+     * @param collectionId Id of collection.
+     * @param metadata    List of metadata which will be placed into collection.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    void replaceCollectionMetadata(Integer collectionId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException;
 
 	/* ITEMS */
 
@@ -721,24 +789,6 @@ public interface DSpaceRESTClient {
      * @throws WebApplicationException
      */
     List<Edge> readAllEdges() throws ProcessingException, WebApplicationException;
-
-    /**
-     * Read all parent edges from community.
-     *
-     * @return List of edges.
-     * @throws ProcessingException
-     * @throws WebApplicationException
-     */
-    List<Edge> readParentEdges(String externalId) throws ProcessingException, WebApplicationException;
-
-    /**
-     * Read all child edges from community.
-     *
-     * @return List of edges.
-     * @throws ProcessingException
-     * @throws WebApplicationException
-     */
-    List<Edge> readChildEdges(String externalId) throws ProcessingException, WebApplicationException;
 
     /**
      * Insert edge into Dspace.

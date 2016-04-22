@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -401,6 +400,91 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
         }
     }
 
+    /**
+     * Replace all community metadata with this list of metadata.
+     *
+     * @param communityId Id of community.
+     * @param metadata    List of metadata which will be placed into community.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final void replaceCommunityMetadata(final Integer communityId, final List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException {
+        log.info("Replacing community metadata(id=" + communityId + ").");
+        final MetadataEntry[] metadataArray = metadata.toArray(new MetadataEntry[metadata.size()]);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + communityId + METADATA);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(metadataArray, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Community(id={}) metadata were successfully replaced.", communityId);
+        } catch (WebApplicationException ex) {
+            log.error("Replacing community(id={}) metadata failed. Response code: {}.", communityId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Add metadata to community.
+     *
+     * @param communityId Id of community.
+     * @param metadata    List of metadat which will be added.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    @Override
+    public void addCommunityMetadata(Integer communityId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException {
+        log.info("Adding community metadata(id=" + communityId + ").");
+        final MetadataEntry[] metadataArray = metadata.toArray(new MetadataEntry[metadata.size()]);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + communityId + METADATA);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(metadataArray, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Community(id={}) metadata were successfully added.", communityId);
+        } catch (WebApplicationException ex) {
+            log.error("Adding community(id={}) metadata failed. Response code: {}.", communityId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Read all metadata in community.
+     *
+     * @param communityId Id of community.
+     *
+     * @return Return List of metadata which community contains.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    @Override
+    public final List<MetadataEntry> readCommunityMetadata(final Integer communityId) throws ProcessingException, WebApplicationException {
+        log.debug("Reading community(id={}) metadata.", communityId);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + "/" + communityId + METADATA);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            final MetadataEntry[] metadataEntries = extractResult(MetadataEntry[].class, response);
+            log.info("Metadata of community(id={}) were successfully read.", communityId);
+            return Arrays.asList(metadataEntries);
+        } catch (WebApplicationException ex) {
+            log.error("Reading metadata of community(id={}) failed. Response code: {}.", communityId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
     @Override
     public Collection createCollection(Integer parentCommunityId, Collection collection) throws ProcessingException, WebApplicationException {
         log.debug("Creating collection in community(id={}).", parentCommunityId);
@@ -528,6 +612,91 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
             return Arrays.asList(items);
         } catch (WebApplicationException ex) {
             log.error("Reading items from collection(id={}) failed. Response code: {}.", parentCollectionId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Replace all collection metadata with this list of metadata.
+     *
+     * @param collectionId Id of collection.
+     * @param metadata    List of metadata which will be placed into collection.
+     *
+     * @throws ProcessingException
+     * @throws WebApplicationException
+     */
+    @Override
+    public final void replaceCollectionMetadata(final Integer collectionId, final List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException {
+        log.info("Replacing collection metadata(id=" + collectionId + ").");
+        final MetadataEntry[] metadataArray = metadata.toArray(new MetadataEntry[metadata.size()]);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + METADATA);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).put(Entity.entity(metadataArray, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Collection(id={}) metadata were successfully replaced.", collectionId);
+        } catch (WebApplicationException ex) {
+            log.error("Replacing collection(id={}) metadata failed. Response code: {}.", collectionId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Add metadata to collection.
+     *
+     * @param collectionId Id of collection.
+     * @param metadata    List of metadat which will be added.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    @Override
+    public void addCollectionMetadata(Integer collectionId, List<MetadataEntry> metadata) throws ProcessingException, WebApplicationException {
+        log.info("Adding collection metadata(id=" + collectionId + ").");
+        final MetadataEntry[] metadataArray = metadata.toArray(new MetadataEntry[metadata.size()]);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + METADATA);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).post(Entity.entity(metadataArray, MediaType.APPLICATION_JSON));
+        try {
+            handleErrorStatus(response);
+            log.info("Collection(id={}) metadata were successfully added.", collectionId);
+        } catch (WebApplicationException ex) {
+            log.error("Adding collection(id={}) metadata failed. Response code: {}.", collectionId, response.getStatus());
+            throw ex;
+        } finally {
+            response.close();
+        }
+    }
+
+    /**
+     * Read all metadata in collection.
+     *
+     * @param collectionId Id of collection.
+     *
+     * @return Return List of metadata which collection contains.
+     *
+     * @throws ProcessingException     ...
+     * @throws WebApplicationException ...
+     */
+    @Override
+    public final List<MetadataEntry> readCollectionMetadata(final Integer collectionId) throws ProcessingException, WebApplicationException {
+        log.debug("Reading collection(id={}) metadata.", collectionId);
+        final String token = login();
+
+        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COLLECTIONS + "/" + collectionId + METADATA);
+        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
+        try {
+            final MetadataEntry[] metadataEntries = extractResult(MetadataEntry[].class, response);
+            log.info("Metadata of collection(id={}) were successfully read.", collectionId);
+            return Arrays.asList(metadataEntries);
+        } catch (WebApplicationException ex) {
+            log.error("Reading metadata of collection(id={}) failed. Response code: {}.", collectionId, response.getStatus());
             throw ex;
         } finally {
             response.close();
@@ -1283,68 +1452,6 @@ public abstract class AbstractDSpaceRESTClient implements DSpaceRESTClient {
             log.info("Edges were successfully read from DSpace.");
         } catch (WebApplicationException ex) {
             log.error("Reading all edges failed. Response code: {}.", response.getStatus());
-            throw ex;
-        } finally {
-            response.close();
-        }
-        return Arrays.asList(edges);
-    }
-
-    /**
-     * Read all parent edges from community.
-     *
-     * @param cvutId Id code of cvut organization unit.
-     *
-     * @return List of edges.
-     *
-     * @throws ProcessingException
-     * @throws WebApplicationException
-     */
-    @Override
-    public final List<Edge> readParentEdges(final String cvutId) throws ProcessingException, WebApplicationException {
-        log.debug("Read parent edges for community(cvutId={}).", cvutId);
-        Edge[] edges = null;
-
-        final String token = login();
-
-        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES + cvutId + "/parent");
-        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
-        try {
-            edges = extractResult(Edge[].class, response);
-            log.info("Edges were successfully read from community(externalId={}).", cvutId);
-        } catch (WebApplicationException ex) {
-            log.error("Reading parent edges from community(externalId=()) failed. Response code: {}.", cvutId, response.getStatus());
-            throw ex;
-        } finally {
-            response.close();
-        }
-        return Arrays.asList(edges);
-    }
-
-    /**
-     * Read all child edges from cumminity.
-     *
-     * @param cvutId External id for which will be child read.
-     *
-     * @return List of edges.
-     *
-     * @throws ProcessingException
-     * @throws WebApplicationException
-     */
-    @Override
-    public final List<Edge> readChildEdges(final String cvutId) throws ProcessingException, WebApplicationException {
-        log.debug("Read child edges for community(cvutId={}).", cvutId);
-        Edge[] edges = null;
-
-        final String token = login();
-
-        final ResteasyWebTarget target = client.target(ENDPOINT_URL + COMMUNITIES + EDGES + cvutId + "/child");
-        final Response response = target.request().header(HEADER_TOKEN, token).accept(MediaType.APPLICATION_JSON).get();
-        try {
-            edges = extractResult(Edge[].class, response);
-            log.info("Edges were successfully read from community(cvutId={}).", cvutId);
-        } catch (WebApplicationException ex) {
-            log.error("Reading child edges from community(cvutId=()) failed. Response code: {}.", cvutId, response.getStatus());
             throw ex;
         } finally {
             response.close();
